@@ -12,9 +12,9 @@
       <el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit2" :loading="logining">登录</el-button>
       <!--<el-button @click.native.prevent="handleReset2">重置</el-button>-->
     </el-form-item> 
-	<!--图片路径写法 第一种能被压缩-->
+	<!--图片路径写法 第一种能被压缩
 	<img src="./../assets/user.png" />
-	<img src="/static/img/user.png" />
+	<img src="/static/img/user.png" />-->
   </el-form>
 </template>
 
@@ -53,7 +53,7 @@
             //_this.$router.replace('/table');
             this.logining = true;
             //NProgress.start();
-			alert(md5_vm_test());
+			//alert(md5_vm_test());
             var loginParams = { username: this.ruleForm2.account, password: this.ruleForm2.checkPass };
             requestLogin(loginParams).then(data => {
               this.logining = false;
