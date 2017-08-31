@@ -1,6 +1,13 @@
 <template>
+
 <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm login-container">
-  <h3 class="title">系统登录</h3>
+
+    <div style="text-align:center">
+      <img src="./../assets/logo2.png" />
+    </div>
+
+  <h1 class="title_sysinfo">信息录入系统</h1>
+  <!--<h3 class="title">系统登录</h3>-->
   <el-form-item prop="account">
     <el-input type="text" v-model="ruleForm2.account" v-focus-next-on-enter="'input2'" auto-complete="off" placeholder="账号"></el-input>
   </el-form-item>
@@ -162,19 +169,31 @@ function delCookie(name) {
     border-radius: 5px;
     -moz-border-radius: 5px;
     background-clip: padding-box;
-    margin: 180px auto;
+    margin: 120px auto;
     width: 350px;
     padding: 35px 35px 15px;
     background: #fff;
     border: 1px solid #eaeaea;
-    box-shadow: 0 0 25px #cac6c6;
+    box-shadow: 0 0 25px #1D8CE0;
     .title {
         margin: 0 auto 40px;
         text-align: center;
         color: #505458;
     }
+    .title_sysinfo{
+        margin: 0 auto 40px;
+        text-align: center;
+        color: #20A0FF;
+    }
     .remember {
         margin: 0 0 35px;
     }
+    .el-row {
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
 }
 </style>
