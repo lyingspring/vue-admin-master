@@ -1,103 +1,162 @@
 <template>
-  <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm login-container">
-    <h3 class="title">系统登录</h3>
-    <el-form-item prop="account">
-      <el-input type="text" v-model="ruleForm2.account" v-btn=""  auto-complete="off" placeholder="账号"></el-input>
-    </el-form-item>
-    <el-form-item prop="checkPass">
-      <el-input type="password" v-model="ruleForm2.checkPass"   @keyup.enter.native="handleSubmit2"  auto-complete="off" placeholder="密码"></el-input>
-    </el-form-item>
-    <el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>
-    <el-form-item style="width:100%;">
-      <el-button type="primary" style="width:100%;"  @click.native.prevent="handleSubmit2" :loading="logining">登录</el-button>
-      <!--<el-button @click.native.prevent="handleReset2">重置</el-button>-->
-    </el-form-item> 
-	<!--图片路径写法 第一种能被压缩
+<el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm login-container">
+  <h3 class="title">系统登录</h3>
+  <el-form-item prop="account">
+    <el-input type="text" v-model="ruleForm2.account" v-focus-next-on-enter="'input2'" auto-complete="off" placeholder="账号"></el-input>
+  </el-form-item>
+  <el-form-item prop="checkPass">
+    <el-input type="password" v-model="ruleForm2.checkPass" ref="input2" @keyup.enter.native="handleSubmit2" auto-complete="off" placeholder="密码"></el-input>
+  </el-form-item>
+  <el-checkbox class="remember" v-model="rmpwd" @change="change1">记住密码</el-checkbox>
+  <el-form-item style="width:100%;">
+    <el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit2" :loading="logining">登录</el-button>
+    <!--<el-button @click.native.prevent="handleReset2">重置</el-button>-->
+  </el-form-item>
+  <!--图片路径写法 第一种能被压缩
 	<img src="./../assets/user.png" />
 	<img src="/static/img/user.png" />-->
-  </el-form>
+</el-form>
 </template>
 
 <script>
-  import { requestLogin } from '../api/api';
-  //import NProgress from 'nprogress'
+import {
+  requestLogin
+} from '../api/api';
+//import NProgress from 'nprogress'
 
 
-  
-  export default {
 
-    data() {
-      return {
-        logining: false,
-        ruleForm2: {
-          account: 'admin',
-          checkPass: '123456'
-        },
-        rules2: {
-          account: [
-            { required: true, message: '请输入账号', trigger: 'blur' },
-            //{ validator: validaePass }
-          ],
-          checkPass: [
-            { required: true, message: '请输入密码', trigger: 'blur' },
-            //{ validator: validaePass2 }
-          ]
-        },
-        checked: true
-      };
-    },
-    methods: {
-      handleReset2() {
-        this.$refs.ruleForm2.resetFields();
+export default {
+
+  data() {
+    return {
+      logining: false,
+      ruleForm2: {
+        account: getCookie("cache_account"),
+        checkPass: getCookie("cache_pwd")
       },
-      handleSubmit2(ev) {
-        var _this = this;
-        this.$refs.ruleForm2.validate((valid) => {
-          if (valid) {
-            //_this.$router.replace('/table');
-            this.logining = true;
-            //NProgress.start();
-			//alert(md5_vm_test());
-            var loginParams = { username: this.ruleForm2.account, password: this.ruleForm2.checkPass };
-            requestLogin(loginParams).then(data => {
-              this.logining = false;
-              //NProgress.done();
-              let { msg, code, user } = data;
-              if (code !== 200) {
-                this.$message({
-                  message: msg,
-                  type: 'error'
-                });
-              } else {
-                sessionStorage.setItem('user', JSON.stringify(user));
-                this.$router.push({ path: '/table' });
+      rules2: {
+        account: [{
+            required: true,
+            message: '请输入账号',
+            trigger: 'blur'
+          },
+          //{ validator: validaePass }
+        ],
+        checkPass: [{
+            required: true,
+            message: '请输入密码',
+            trigger: 'blur'
+          },
+          //{ validator: validaePass2 }
+        ]
+      },
+      rmpwd: getCookie("cache_pwd_checked")
+    };
+  },
+  methods: {
+    handleReset2() {
+      this.$refs.ruleForm2.resetFields();
+    },
+    change1(){
+      //console.log(this.rmpwd);
+    }
+    ,
+    handleSubmit2(ev) {
+      var _this = this;
+      this.$refs.ruleForm2.validate((valid) => {
+        if (valid) {
+          //_this.$router.replace('/table');
+          this.logining = true;
+          //NProgress.start();
+          //alert(md5_vm_test());
+          var loginParams = {
+            username: this.ruleForm2.account,
+            password: this.ruleForm2.checkPass
+          };
+          requestLogin(loginParams).then(data => {
+            this.logining = false;
+            //NProgress.done();
+            let {
+              msg,
+              code,
+              user
+            } = data;
+            if (code !== 200) {
+              this.$message({
+                message: msg,
+                type: 'error'
+              });
+            } else {
+                setCookie("cache_account",loginParams.username,30);//记住账号
+              if(this.rmpwd){//是否记住密码
+                setCookie("cache_pwd",loginParams.password,30);
+              }else{
+                setCookie("cache_pwd",'',30);
               }
-            });
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
+              sessionStorage.setItem('user', JSON.stringify(user));
+              this.$router.push({
+                path: '/table'
+              });
+            }
+          });
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    }
+  },
+  directives: {
+    btn: {
+      // 指令的定义<el-input type="text" v-model="ruleForm2.account" v-btn=""></el-input>
+
+      //update: function (el,o) {
+      // 聚焦元素
+      //el.focus();
+      //console.log(o.value);
+      //}
+
+    }
+  },
+  filters: { //过滤器
+    getstatus: function(rmp) {
+      alert(rmp)
+      if (rmp == 'true') {
+        alert(rmp);
+        return true;
+      } else {
+        return false;
       }
     },
-	directives: {
-		btn: {
-			// 指令的定义---
-
-			update: function (el,o) {
-				// 聚焦元素
-				el.focus();
-				console.log(o.value);
-			}
-
-		}
-	}
   }
+}
+////////////////////设置COOKIE
+function getCookie(name) {
+  var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+  if (arr = document.cookie.match(reg))
+    return unescape(arr[2]);
+  else
+    return null;
+}
 
+function setCookie(c_name, value, expiredays) {
+  var exdate = new Date()
+  exdate.setDate(exdate.getDate() + expiredays)
+  document.cookie = c_name + "=" + escape(value) + ((expiredays == null) ? "" : ";expires=" + exdate.toGMTString())
+}
+
+function delCookie(name) {
+  var exp = new Date();
+  exp.setTime(exp.getTime() - 1);
+  var cval = getCookie(name);
+  if (cval != null)
+    document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
+}
 </script>
 
 <style lang="scss" scoped>
-  .login-container {
+.login-container {
     /*box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);*/
     -webkit-border-radius: 5px;
     border-radius: 5px;
@@ -105,17 +164,17 @@
     background-clip: padding-box;
     margin: 180px auto;
     width: 350px;
-    padding: 35px 35px 15px 35px;
+    padding: 35px 35px 15px;
     background: #fff;
     border: 1px solid #eaeaea;
     box-shadow: 0 0 25px #cac6c6;
     .title {
-      margin: 0px auto 40px auto;
-      text-align: center;
-      color: #505458;
+        margin: 0 auto 40px;
+        text-align: center;
+        color: #505458;
     }
     .remember {
-      margin: 0px 0px 35px 0px;
+        margin: 0 0 35px;
     }
-  }
+}
 </style>

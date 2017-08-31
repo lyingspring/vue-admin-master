@@ -24,7 +24,7 @@ const router = new VueRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {//在每次路由前触发
   //NProgress.start();
   if (to.path == '/login') {
     sessionStorage.removeItem('user');
@@ -41,6 +41,26 @@ router.beforeEach((to, from, next) => {
 //NProgress.done();
 //});
 
+Vue.directive('focusNextOnEnter', {//自定义指令 用于回车换标签
+  bind: function(el, {
+    value
+  }, vnode) {
+
+    el.addEventListener('keyup', (ev) => {
+
+      if (ev.keyCode === 13) {
+        //let nextInput = vnode.context.$refs[value]
+        let nextInput = vnode.context.$refs[value].$refs.input//由于用的是组件所以要获取组件中的input .$refs.input
+        if (nextInput && typeof nextInput.focus === 'function') {
+
+          nextInput.focus()
+          nextInput.select()
+        }
+      }
+    })
+  }
+})
+
 new Vue({
   //el: '#app',
   //template: '<App/>',
@@ -49,4 +69,3 @@ new Vue({
   //components: { App }
   render: h => h(App)
 }).$mount('#app')
-
