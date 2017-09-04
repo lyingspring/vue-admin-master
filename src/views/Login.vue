@@ -58,7 +58,7 @@ export default {
           //{ validator: validaePass2 }
         ]
       },
-      rmpwd: getCookie("cache_pwd_checked")
+      rmpwd: getCookie("cache_pwd_checked")=='true'?true:false
     };
   },
   methods: {
@@ -98,8 +98,11 @@ export default {
                 setCookie("cache_account",loginParams.username,30);//记住账号
               if(this.rmpwd){//是否记住密码
                 setCookie("cache_pwd",loginParams.password,30);
+                setCookie("cache_pwd_checked",this.rmpwd,30);
+
               }else{
                 setCookie("cache_pwd",'',30);
+                setCookie("cache_pwd_checked",false,30);
               }
               sessionStorage.setItem('user', JSON.stringify(user));
               this.$router.push({
