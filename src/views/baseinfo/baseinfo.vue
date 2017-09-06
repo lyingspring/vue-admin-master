@@ -16,20 +16,24 @@
 		</el-col>
 
 		<!--列表-->
-		<el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+		<el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" border height="500" style="width: 100%;">
 			<el-table-column type="selection" width="55">
 			</el-table-column>
-			<el-table-column type="index" width="60">
+			<el-table-column type="index" width="65">
 			</el-table-column>
-			<el-table-column prop="name" label="姓名" width="120" sortable>
+			<el-table-column prop="aac003" label="姓名" width="100" sortable>
 			</el-table-column>
-			<el-table-column prop="sex" label="性别" width="100" :formatter="formatSex" sortable>
+			<el-table-column prop="aac004" label="性别" width="80" :formatter="formatSex" sortable>
 			</el-table-column>
-			<el-table-column prop="age" label="年龄" width="100" sortable>
+			<el-table-column prop="aae135" label="身份证" width="180" sortable>
 			</el-table-column>
-			<el-table-column prop="birth" label="生日" width="120" sortable>
+			<el-table-column prop="aac006" label="生日" width="120" sortable>
 			</el-table-column>
-			<el-table-column prop="addr" label="地址" min-width="180" sortable>
+			<el-table-column prop="aae006" label="地址" min-width="180" sortable>
+			</el-table-column>
+			<el-table-column prop="aae005" label="联系电话" min-width="120" sortable>
+			</el-table-column>
+			<el-table-column prop="aaz308" label="业务id" v-if="column_show" min-width="120" sortable>
 			</el-table-column>
 			<el-table-column label="操作" width="150">
 				<template scope="scope">
@@ -37,12 +41,14 @@
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
 				</template>
 			</el-table-column>
+			<el-table-column prop="caa001" label="录入时间" min-width="180" sortable>
+			</el-table-column>
 		</el-table>
 
 		<!--工具条-->
 		<el-col :span="24" class="toolbar">
 			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
-			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
+			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="50" :total="total" style="float:right;">
 			</el-pagination>
 		</el-col>
 
@@ -77,6 +83,14 @@
 		<!--新增界面-->
 		<el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
 			<el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
+				<el-form-item label="信息搜索" >
+					<el-autocomplete style="width:280px"
+  				v-model="searchinfo"
+  				:fetch-suggestions="querySearchAsync"
+  				placeholder="请输入身份证或姓名..."
+  				@select="handleSelect"></el-autocomplete>
+				</el-form-item>
+
 				<el-form-item label="姓名" prop="name">
 					<el-input v-model="addForm.name" auto-complete="off"></el-input>
 				</el-form-item>
@@ -107,7 +121,7 @@
 <script>
 	import util from '../../common/js/util'
 	//import NProgress from 'nprogress'
-	import { getUserListPage, removeUser, batchRemoveUser, editUser, addUser } from '../../api/api';
+	import { getUserListPage, removeUser, batchRemoveUser, editUser, addUser,querySearchperson } from '../../api/api';
 
 	export default {
 		data() {
@@ -116,11 +130,13 @@
 					name: ''
 				},
 				users: [],
+				login_user: [],
 				total: 0,
 				page: 1,
 				listLoading: false,
+				searchinfo: '',
 				sels: [],//列表选中列
-
+				column_show:false,
 				editFormVisible: false,//编辑界面是否显示
 				editLoading: false,
 				editFormRules: {
@@ -159,7 +175,7 @@
 		methods: {
 			//性别显示转换
 			formatSex: function (row, column) {
-				return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
+				return row.aac004 == '1' ? '男' : row.aac004 == '2' ? '女' : '未知';
 			},
 			handleCurrentChange(val) {
 				this.page = val;
@@ -167,15 +183,18 @@
 			},
 			//获取用户列表
 			getUsers() {
+
 				let para = {
+					method:'getUserListPage',
+					login_user:this.login_user.aaz001,
 					page: this.page,
 					name: this.filters.name
 				};
 				this.listLoading = true;
 				//NProgress.start();
 				getUserListPage(para).then((res) => {
-					this.total = res.data.total;
-					this.users = res.data.users;
+					this.total = parseInt(res.data.msg);
+					this.users = res.data.obj;
 					this.listLoading = false;
 					//NProgress.done();
 				});
@@ -216,7 +235,7 @@
 					birth: '',
 					addr: ''
 				};
-				
+				this.searchinfo="";
 			},
 			//编辑
 			editSubmit: function () {
@@ -290,10 +309,35 @@
 				}).catch(() => {
 
 				});
-			}
+			},
+			querySearchAsync(queryString, cb) {
+				let para = {
+					method:'querySearchperson',
+					msg: queryString
+				};
+        var results = "";
+				if(queryString.length>=3){
+					querySearchperson(para).then((res) => {
+						cb(res.data);
+					});
+				}
+
+
+
+
+      },
+			handleSelect(item) {
+        console.log(item);
+      }
+
 		},
 		mounted() {
-			this.getUsers();
+			var loginuser = sessionStorage.getItem('user');
+			if (loginuser) {
+				this.login_user = JSON.parse(loginuser);
+			}
+
+		//	this.getUsers();
 		}
 	}
 

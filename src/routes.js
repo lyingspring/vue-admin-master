@@ -9,6 +9,7 @@ import Page4 from './views/nav2/Page4.vue'
 import Page5 from './views/nav2/Page5.vue'
 import Page6 from './views/nav3/Page6.vue'
 import echarts from './views/charts/echarts.vue'
+import baseinfo from './views/baseinfo/baseinfo.vue'
 
 let routes = [
     {
@@ -24,6 +25,17 @@ let routes = [
         hidden: true
     },
     //{ path: '/main', component: Main },
+    {
+        path: '/',
+        component: Home,
+        name: '建筑工伤',
+        iconCls: 'el-icon-message',//图标样式class
+        children: [
+            
+            { path: '/baseinfo', component: baseinfo, name: '信息录入' },
+
+        ]
+    },
     {
         path: '/',
         component: Home,
