@@ -84,7 +84,7 @@
 		<el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
 			<el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
 				<el-form-item label="信息搜索" >
-					<el-autocomplete style="width:280px"
+					<el-autocomplete style="width:50%"
   				v-model="searchinfo"
   				:fetch-suggestions="querySearchAsync"
   				placeholder="请输入身份证或姓名..."
@@ -92,7 +92,10 @@
 				</el-form-item>
 
 				<el-form-item label="姓名" prop="name">
-					<el-input v-model="addForm.name" auto-complete="off"></el-input>
+					<el-input v-model="addForm.name" style="width:50%" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="身份证" prop="aae135">
+					<el-input v-model="addForm.aae135" style="width:50%" @blur="CheckIdcard" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="性别">
 					<el-radio-group v-model="addForm.sex">
@@ -100,12 +103,13 @@
 						<el-radio class="radio" :label="0">女</el-radio>
 					</el-radio-group>
 				</el-form-item>
-				<el-form-item label="年龄">
-					<el-input-number v-model="addForm.age" :min="0" :max="200"></el-input-number>
-				</el-form-item>
 				<el-form-item label="生日">
 					<el-date-picker type="date" placeholder="选择日期" v-model="addForm.birth"></el-date-picker>
 				</el-form-item>
+				<el-form-item label="年龄">
+					<el-input-number v-model="addForm.age" :min="0" :max="200"></el-input-number>
+				</el-form-item>
+
 				<el-form-item label="地址">
 					<el-input type="textarea" v-model="addForm.addr"></el-input>
 				</el-form-item>
@@ -142,6 +146,9 @@
 				editFormRules: {
 					name: [
 						{ required: true, message: '请输入姓名', trigger: 'blur' }
+					],
+					aae135: [
+						{ required: true, message: '请输入身份证', trigger: 'blur' }
 					]
 				},
 				//编辑界面数据
@@ -159,6 +166,9 @@
 				addFormRules: {
 					name: [
 						{ required: true, message: '请输入姓名', trigger: 'blur' }
+					],
+					aae135: [
+						{ required: true, message: '请输入身份证', trigger: 'blur' }
 					]
 				},
 				//新增界面数据
@@ -167,7 +177,8 @@
 					sex: -1,
 					age: 0,
 					birth: '',
-					addr: ''
+					addr: '',
+					aae135:''
 				}
 
 			}
@@ -316,19 +327,26 @@
 					msg: queryString
 				};
         var results = "";
-				if(queryString.length>=3){
+				if( util.strlen(queryString)>=4){//如果大于两个中文或4个英文
+					//console.log(util.validateIdCard("330283198602180018"));
 					querySearchperson(para).then((res) => {
 						cb(res.data);
 					});
 				}
 
-
-
-
       },
 			handleSelect(item) {
+				this.addForm = Object.assign({}, item);
         console.log(item);
-      }
+      },
+			CheckIdcard: function(){
+
+				if(!util.validateIdCard(this.addForm.aae135)&&this.addForm.aae135.length>0){
+					this.addForm.aae135='';
+					this.$message.error('身份证验证失败');
+
+				}
+			}
 
 		},
 		mounted() {
