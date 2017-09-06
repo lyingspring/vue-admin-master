@@ -78,17 +78,21 @@ export default {
           //NProgress.start();
           //alert(md5_vm_test());
           var loginParams = {
+            method:'login',
             username: this.ruleForm2.account,
-            password: this.ruleForm2.checkPass
+            password: hex_md5(this.ruleForm2.checkPass)
           };
           requestLogin(loginParams).then(data => {
             this.logining = false;
             //NProgress.done();
-            let {
-              msg,
-              code,
-              user
-            } = data;
+            let msg=data.msg
+            let code=data.code
+            let user=data.obj
+            // let {
+            //   msg,
+            //   code,
+            //   user
+            // } = data;
             if (code !== 200) {
               this.$message({
                 message: msg,
@@ -97,7 +101,7 @@ export default {
             } else {
                 setCookie("cache_account",loginParams.username,30);//记住账号
               if(this.rmpwd){//是否记住密码
-                setCookie("cache_pwd",loginParams.password,30);
+                setCookie("cache_pwd",this.ruleForm2.checkPass,30);
                 setCookie("cache_pwd_checked",this.rmpwd,30);
 
               }else{

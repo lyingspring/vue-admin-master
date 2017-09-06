@@ -5,14 +5,19 @@
 			<el-col :span="10" class="logo" :class="collapsed?'logo-collapse-width':'logo-width'">
 				<img src="./../assets/logo2.png" />{{collapsed?'':sysName}}
 			</el-col>
-			<el-col :span="10">
+			<el-col :span="9">
 				<div class="tools" @click.prevent="collapse">
 					<i class="fa fa-align-justify"></i>
 				</div>
 			</el-col>
+			<el-col :span="1" class="userinfo">
+				<span class="userinfo-inner "><img :src="this.sysUserAvatar" /></span>
+			</el-col>
 			<el-col :span="4" class="userinfo">
+
 				<el-dropdown trigger="hover">
-					<span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{sysUserName}}</span>
+					<!-- <span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{sysUserName}}</span> -->
+					<marquee class="el-dropdown-link userinfo-inner" behavior="scroll">{{sysUserName}}</marquee>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item>我的消息</el-dropdown-item>
 						<el-dropdown-item>设置</el-dropdown-item>
@@ -126,12 +131,12 @@
 				this.$refs.menuCollapsed.getElementsByClassName('submenu-hook-'+i)[0].style.display=status?'block':'none';
 			}
 		},
-		mounted() {
+		mounted() {//页面加载时运行
 			var user = sessionStorage.getItem('user');
 			if (user) {
 				user = JSON.parse(user);
-				this.sysUserName = user.name || '';
-				this.sysUserAvatar = user.avatar || '';
+				this.sysUserName = user.bae049|| '';
+				this.sysUserAvatar = require('./../assets/logo.png') || '';
 			}
 
 		}
@@ -167,7 +172,9 @@
 						float: right;
 					}
 				}
+
 			}
+
 			.logo {
 				//width:230px;
 				height:60px;

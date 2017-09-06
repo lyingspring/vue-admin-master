@@ -1,8 +1,12 @@
 import axios from 'axios';
-
+import qs from 'querystring';
 let base = '';
 
-export const requestLogin = params => { return axios.post(`${base}/login`, params).then(res => res.data); };
+export const requestLogin = params => { return axios.post(`${base}/insiis/pages/insuredmgmt/aloneinjury/AloneInjuryapi.jsp`, qs.stringify(params),{
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+  },
+}).then(res => res.data); };
 
 export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };
 

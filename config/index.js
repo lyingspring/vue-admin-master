@@ -29,15 +29,15 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {//代理和跨域配置
-		
-       // '/apis': {
-       //     // 测试环境
-       //     target: 'https://goods.footer.com',  // 接口域名
-       //     changeOrigin: true,  //是否跨域
-       //     pathRewrite: {
-       //         '^/apis': ''   //需要rewrite重写的,
-       //     }              
-       // }
+
+       '/insiis': {
+           // 测试环境
+           target: 'http://218.75.78.86:8444',  // 接口域名
+           changeOrigin: true,  //是否跨域
+           pathRewrite: {
+               '^/insiis': '/insiis'   //需要rewrite重写的,
+           }
+       }
 	},
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
