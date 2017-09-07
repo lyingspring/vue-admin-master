@@ -1,4 +1,6 @@
-import { queryAa10List } from '../../api/api';
+import {
+  queryAa10List
+} from '../../api/api';
 var SIGN_REGEXP = /([yMdhsm])(\1*)/g;
 var DEFAULT_PATTERN = 'yyyy-MM-dd';
 
@@ -114,32 +116,35 @@ export default {
         //如果等于2，则说明校验码是10，身份证号码最后一位应该是X
         if (idCardMod == 2) {
           if (idCardLast == "X" || idCardLast == "x") {
-          return  true;
+            return true;
           } else {
-              return  false;
+            return false;
           }
         } else {
           //用计算出的验证码与最后一位身份证号码匹配，如果一致，说明通过，否则是无效的身份证号码
           if (idCardLast == idCardY[idCardMod]) {
-              return  true;
+            return true;
           } else {
-              return  false;
+            return false;
           }
         }
       }
     } else {
-        return  false;
+      return false;
     }
   },
-  getAa10List:function(AAA100,filter) {//获取数据字典
+  getAa10List: function(AAA100, filter) { //获取数据字典
     var para = {
-      method:'queryAa10List',
-      AAA100:AAA100,
-      filter:filter
+      method: 'queryAa10List',
+      aaa100: AAA100,
+      filter: filter
     };
-    queryAa10List(para).then((res) => {
+
+    var datestr = queryAa10List(para).then((res) => {
       return res.data;
     });
+
+    return datestr;
 
   }
 
