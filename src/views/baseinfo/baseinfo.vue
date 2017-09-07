@@ -106,8 +106,11 @@
 				<el-form-item label="生日">
 					<el-date-picker type="date" placeholder="选择日期" v-model="addForm.birth"></el-date-picker>
 				</el-form-item>
-				<el-form-item label="年龄">
-					<el-input-number v-model="addForm.age" :min="0" :max="200"></el-input-number>
+				<el-form-item label="民族">
+					<el-select v-model="addForm.aac005" clearable placeholder="请选择">
+	          <el-option v-for="item in aac005_ops" :key="item.key" :label="item.value" :value="item.key">
+	          </el-option>
+	        </el-select>
 				</el-form-item>
 
 				<el-form-item label="地址">
@@ -178,8 +181,11 @@
 					age: 0,
 					birth: '',
 					addr: '',
-					aae135:''
-				}
+					aae135:'',
+					aac005:''
+				},
+				aac005_ops:[{key:'1',value:'汉'}]
+
 
 			}
 		},

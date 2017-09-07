@@ -1,3 +1,4 @@
+import { queryAa10List } from '../../api/api';
 var SIGN_REGEXP = /([yMdhsm])(\1*)/g;
 var DEFAULT_PATTERN = 'yyyy-MM-dd';
 
@@ -129,6 +130,17 @@ export default {
     } else {
         return  false;
     }
+  },
+  getAa10List:function(AAA100,filter) {//获取数据字典
+    var para = {
+      method:'queryAa10List',
+      AAA100:AAA100,
+      filter:filter
+    };
+    queryAa10List(para).then((res) => {
+      return res.data;
+    });
+
   }
 
 };

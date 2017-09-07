@@ -15,6 +15,9 @@ export const getUserListPage = params => { return axios.get(`${base}/insiis/page
 export const querySearchperson = params => { return axios.get(`${base}/insiis/pages/insuredmgmt/aloneinjury/AloneInjuryapi.jsp`,
   { params: params }); };
 
+export const queryAa10List = params => { return axios.get(`${base}/insiis/pages/insuredmgmt/aloneinjury/AloneInjuryapi.jsp`,
+    { params: params }); };
+
 
 
 // export const requestLogin = params => { return axios.post(`${base}/login`, params).then(res => res.data); };
