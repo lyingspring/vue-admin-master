@@ -81,17 +81,19 @@
   </el-dialog>
 
   <!--新增界面-->
-  <el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
+  <el-dialog title="工伤人员新增" v-model="addFormVisible" :close-on-click-modal="false">
     <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
       <el-form-item label="信息搜索">
-        <el-autocomplete style="width:50%" icon="search" v-model="searchinfo" :fetch-suggestions="querySearchAsync" placeholder="请输入身份证或姓名..." @select="handleSelect"></el-autocomplete>
+        <el-autocomplete style="width:50%"  icon="search" v-model="searchinfo" :fetch-suggestions="querySearchAsync" placeholder="请输入身份证或姓名..." @select="handleSelect"></el-autocomplete>
       </el-form-item>
-
+      <el-form-item label="ID" v-if="column_show">
+        <el-input v-model="addForm.aac001" style="width:50%" auto-complete="off"></el-input>
+      </el-form-item>
       <el-form-item label="姓名" prop="aac003">
-        <el-input v-model="addForm.aac003" style="width:50%" auto-complete="off"></el-input>
+        <el-input v-model="addForm.aac003" style="width:50%"  auto-complete="off"></el-input>
       </el-form-item>
       <el-form-item label="身份证" prop="aae135">
-        <el-input v-model="addForm.aae135" style="width:50%" @blur="CheckIdcard" auto-complete="off"></el-input>
+        <el-input v-model="addForm.aae135" style="width:50%" @change="aae135Change" @blur="CheckIdcard" auto-complete="off"></el-input>
       </el-form-item>
       <el-form-item label="性别">
         <el-radio-group v-model="addForm.aac004">
@@ -100,7 +102,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="生日">
-        <el-date-picker type="date" placeholder="选择日期" v-model="addForm.aac006"></el-date-picker>
+        <el-date-picker type="date" placeholder="选择日期"  v-model="addForm.aac006"></el-date-picker>
       </el-form-item>
       <el-form-item label="民族" prop="aac005">
         <el-select v-model="addForm.aac005" placeholder="请选择">
@@ -142,7 +144,8 @@ import {
   batchRemoveUser,
   editUser,
   addUser,
-  querySearchperson
+  querySearchperson,
+  addPerson
 } from '../../api/api';
 
 export default {
@@ -218,8 +221,10 @@ export default {
           trigger: 'blur'
         }]
       },
+      addFormReset:{},
       //新增界面数据
       addForm: {
+        aac001:'',
         aac003: '',
         aac004: -1,
         aac009: -1,
@@ -295,13 +300,13 @@ export default {
     },
     //显示新增界面
     handleAdd: function() {
-      this.addFormVisible = true;
-      this.searchinfo = "";
+      this.addFormVisible = true;//页面显示
+      this.searchinfo = "";//查询框清空
+      this.addForm=Object.assign({}, this.addFormReset);//页面重置
       util.getAa10List('aac005', '').then((res) => { //数据字典
         this.addForm.aac005_ops = res;
         //this.addForm.aac005='01';//默认汉族
       })
-
 
     },
     //编辑
@@ -336,17 +341,25 @@ export default {
             this.addLoading = true;
             //NProgress.start();
             let para = Object.assign({}, this.addForm);
-            para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-            addUser(para).then((res) => {
+            para.aac006 = (!para.aac006 || para.aac006 == '') ? '' : util.formatDate.format(new Date(para.aac006), 'yyyyMMdd');
+            para.method='addPerson';
+            para.aaz001=this.login_user.aaz001;
+            console.log(para);
+            addPerson(para).then((res) => {
               this.addLoading = false;
               //NProgress.done();
-              this.$message({
-                message: '提交成功',
-                type: 'success'
-              });
+              if(res.data.code=='200'){
+                this.$message({
+                  message: '提交成功',
+                  type: 'success'
+                });
+              }else{
+                this.$message.error(res.data.msg);
+              }
+
               this.$refs['addForm'].resetFields();
-              this.addFormVisible = false;
-              this.getUsers();
+              //this.addFormVisible = false;
+            // this.getUsers();
             });
           });
         }
@@ -380,6 +393,7 @@ export default {
       });
     },
     querySearchAsync(queryString, cb) { //远程索搜
+
       let para = {
         method: 'querySearchperson',
         msg: queryString
@@ -397,6 +411,10 @@ export default {
       this.addForm = Object.assign({}, item);
 			this.addForm.aac004=parseInt(item.aac004);
 			this.addForm.aac009=parseInt(item.aac009);
+      this.addForm.aac006=util.formatDate.parse(item.aac006.toString(),'yyyyMMdd');
+      this.searchinfo='';
+      // var test=document.getElementsByTagName('html')[0].outerHTML;
+      // console.log(test);
     },
     CheckIdcard: function() {
 
@@ -404,7 +422,34 @@ export default {
         this.addForm.aae135 = '';
         this.$message.error('身份证验证失败');
 
+      }else if(this.addForm.aac001==''&& this.addForm.aae135.length >= 17){
+        let para = {
+          method: 'querySearchperson',
+          msg: this.addForm.aae135
+        };
+        querySearchperson(para).then((res) => {
+          if(res.data.length==1){
+            this.addForm = Object.assign({}, res.data[0]);
+      			this.addForm.aac004=parseInt(res.data[0].aac004);
+      			this.addForm.aac009=parseInt(res.data[0].aac009);
+            this.addForm.aac006=util.formatDate.parse(res.data[0].aac006.toString(),'yyyyMMdd');
+          }else if(res.data.length>1){
+            // this.addForm=this.addFormReset;
+            this.addForm = Object.assign({}, this.addFormReset);
+            this.$message.error('该人员在系统中有多条数据，请先在索搜框中查询');
+          }else{//根据输入的身份证自动计算性别和出生日期
+            let aac004=parseInt(this.addForm.aae135.substr(16,1))%2;//性别
+            if(aac004!=1){
+              aac004=2;
+            }
+            this.addForm.aac004=aac004;
+            this.addForm.aac006=util.formatDate.parse(this.addForm.aae135.toString().substr(6,8),'yyyyMMdd');
+          }
+        });
       }
+    },
+    aae135Change:function(){
+      this.addForm.aac001 ='';
     }
 
   },
@@ -413,7 +458,7 @@ export default {
     if (loginuser) {
       this.login_user = JSON.parse(loginuser);
     }
-
+    this.addFormReset=this.addForm;//将新增模块初始值给一个常量，昂便页面重置
     //	this.getUsers();
   }
 }

@@ -47,9 +47,14 @@ export default {
         }
       });
     },
-    parse: function(dateString, pattern) {
+    parse: function(dateString, pattern) {//String转date类型 按pattern parse( '1978-02-18','yyyy-MM-dd')
       var matchs1 = pattern.match(SIGN_REGEXP);
       var matchs2 = dateString.match(/(\d)+/g);
+      if(pattern=='yyyyMMdd'){
+        matchs2=[dateString.substr(0,4),dateString.substr(4,2),dateString.substr(6,2)];
+      }
+      // console.log(matchs1);
+      // console.log(matchs2);
       if (matchs1.length == matchs2.length) {
         var _date = new Date(1970, 0, 1);
         for (var i = 0; i < matchs1.length; i++) {
