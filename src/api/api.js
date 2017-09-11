@@ -21,6 +21,10 @@ export const queryAa10List = params => { return axios.get(`${base}/insiis/pages/
 export const addPerson = params => { return axios.get(`${base}/insiis/pages/insuredmgmt/aloneinjury/AloneInjuryapi.jsp`,
     { params: params }); };
 
+export const removePerson = params => { return axios.get(`${base}/insiis/pages/insuredmgmt/aloneinjury/AloneInjuryapi.jsp`,
+    { params: params }); };
+export const batchRemovePerson = params => { return axios.get(`${base}/insiis/pages/insuredmgmt/aloneinjury/AloneInjuryapi.jsp`,
+    { params: params }); };
 
 // export const requestLogin = params => { return axios.post(`${base}/login`, params).then(res => res.data); };
 //
