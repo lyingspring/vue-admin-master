@@ -10,6 +10,7 @@ import Page5 from './views/nav2/Page5.vue'
 import Page6 from './views/nav3/Page6.vue'
 import echarts from './views/charts/echarts.vue'
 import baseinfo from './views/baseinfo/baseinfo.vue'
+import batchinput from './views/baseinfo/batchinput.vue'
 
 let routes = [
     {
@@ -31,8 +32,9 @@ let routes = [
         name: '建筑工伤',
         iconCls: 'el-icon-message',//图标样式class
         children: [
-            
+
             { path: '/baseinfo', component: baseinfo, name: '信息录入' },
+            { path: '/batchinput', component: batchinput, name: '数据批量导入' }
 
         ]
     },
