@@ -16,7 +16,7 @@
   <div class="slideunlock-wrapper">
     <input type="hidden" value="" class="slideunlock-lockable" />
     <div class="slideunlock-slider">
-      <span class="slideunlock-label"></span>
+      <span class="slideunlock-label" style="color:#ffffff;text-align:center;line-height:55px">>></span>
       <span class="slideunlock-lable-tip">Slide to unlock!</span>
     </div>
   </div>
@@ -33,9 +33,10 @@
 </template>
 <style scoped>
 /*@import '/static/css/normalize.css';*/
+
 @import '/static/css/slideunlock.css';
 </style>
-<script src="../../static/js/slideunlock.js" ></script>
+
 <script>
 import {
   requestLogin
@@ -78,8 +79,8 @@ export default {
     change1() {
       //console.log(this.rmpwd);
     },
-    slideunlockSuccess(){//滑动验证成功后调用
-      this.canLogin=true;
+    slideunlockSuccess() { //滑动验证成功后调用
+      this.canLogin = true;
     },
     handleSubmit2(ev) {
 
@@ -91,7 +92,7 @@ export default {
           //NProgress.start();
           //alert(md5_vm_test());
 
-          if(!this.canLogin){
+          if (!this.canLogin) {
             this.$message({
               message: "请先滑动验证",
               type: 'error'
@@ -168,7 +169,7 @@ export default {
   },
   mounted() {
     ///滑动验证
-    this.canLogin=false;
+    this.canLogin = false;
     var slider = new SliderUnlock(".slideunlock-slider", {}, this.slideunlockSuccess, function() {
 
     });
@@ -182,15 +183,39 @@ export default {
 ////////////////////设置COOKIE
 function getCookie(name) {
   var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
-  if (arr = document.cookie.match(reg))
-    return unescape(arr[2]);
-  else
+  if (arr = document.cookie.match(reg)) {
+    var returnstr = unescape(arr[2]);
+
+    if (name == "cache_pwd") { //如果是密码的话混肴解密
+      var dd = [];
+      dd = returnstr.split("##");
+      returnstr = "";
+      for (let i = 0; i < dd.length; i++) {
+        returnstr = returnstr + String.fromCharCode(parseInt(dd[i]) - 1);
+      }
+    }
+
+    return returnstr;
+  } else
     return null;
 }
 
 function setCookie(c_name, value, expiredays) {
   var exdate = new Date()
   exdate.setDate(exdate.getDate() + expiredays)
+
+  if (c_name == "cache_pwd") { //如果是密码的话混肴加密
+    var bb = "";
+    for (var i = 0; i < value.length; i++) {
+      bb = bb + parseInt(value.charCodeAt(i) + 1);
+      if (value.length - 1 > i) {
+        bb = bb + "##";
+      }
+    }
+    value = bb;
+  }
+
+
   document.cookie = c_name + "=" + escape(value) + ((expiredays == null) ? "" : ";expires=" + exdate.toGMTString())
 }
 
