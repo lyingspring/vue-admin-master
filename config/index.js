@@ -32,7 +32,8 @@ module.exports = {
 
        '/insiis': {
            // 测试环境
-           target: 'http://218.75.78.86:8444',  // 接口域名
+          // target: 'http://218.75.78.86:8444',  // 接口域名
+           target: 'http://127.0.0.1:8090',  // 接口域名
            changeOrigin: true,  //是否跨域
            pathRewrite: {
                '^/insiis': '/insiis'   //需要rewrite重写的,

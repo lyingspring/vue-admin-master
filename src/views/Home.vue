@@ -135,7 +135,7 @@
 			var user = sessionStorage.getItem('user');
 			if (user) {
 				user = JSON.parse(user);
-				this.sysUserName = user.bae049|| '';
+				this.sysUserName = user.bae049+' 工程时间：'+user.bae052+'-'+user.bae053|| '';
 				this.sysUserAvatar = require('./../assets/logo.png') || '';
 			}
 

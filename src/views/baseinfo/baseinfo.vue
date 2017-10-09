@@ -308,6 +308,13 @@ export default {
     },
     //显示新增界面
     handleAdd: function() {
+      var mydate=new Date();
+      var nowdate=util.formatDate.format(mydate,'yyyyMMdd');
+      
+      if(this.login_user.bae053<nowdate){
+        this.$message.error('工程已到期，不能进行新增操作！工程到期时间：'+this.login_user.bae053);
+        return;
+      }
       this.addFormVisible = true;//页面显示
       this.searchinfo = "";//查询框清空
       this.addForm=Object.assign({}, this.addFormReset);//页面重置

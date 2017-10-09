@@ -114,6 +114,13 @@ export default {
     batchUpload: function() {
       // var ids = this.sels.map(item => item.aaz308).toString();
       // console.log(ids);
+      var mydate=new Date();
+      var nowdate=util.formatDate.format(mydate,'yyyyMMdd');
+      if(this.login_user.bae053<nowdate){
+        this.$message.error('工程已到期，不能进行新增操作！工程到期时间：'+this.login_user.bae053);
+        return;
+      }
+      
       this.$confirm('确认上传选中记录吗？', '提示', {
         type: 'warning'
       }).then(() => {
@@ -173,6 +180,7 @@ export default {
     if (loginuser) {
       this.login_user = JSON.parse(loginuser);
     }
+
 
   }
 }

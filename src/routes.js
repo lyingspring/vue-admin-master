@@ -48,7 +48,8 @@ let routes = [
             { path: '/table', component: Table, name: 'Table' },
             { path: '/form', component: Form, name: 'Form' },
             { path: '/user', component: user, name: '列表' },
-        ]
+        ],
+        hidden: true
     },
     {
         path: '/',
@@ -58,7 +59,8 @@ let routes = [
         children: [
             { path: '/page4', component: Page4, name: '页面4' },
             { path: '/page5', component: Page5, name: '页面5' }
-        ]
+        ],
+        hidden: true
     },
     {
         path: '/',
@@ -68,7 +70,8 @@ let routes = [
         leaf: true,//只有一个节点
         children: [
             { path: '/page6', component: Page6, name: '导航三' }
-        ]
+        ],
+        hidden: true
     },
     {
         path: '/',
@@ -77,7 +80,8 @@ let routes = [
         iconCls: 'fa fa-bar-chart',
         children: [
             { path: '/echarts', component: echarts, name: 'echarts' }
-        ]
+        ],
+        hidden: true
     },
     {
         path: '*',
