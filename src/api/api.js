@@ -25,7 +25,8 @@ export const removePerson = params => { return axios.get(`${base}/insiis/pages/i
     { params: params }); };
 export const batchRemovePerson = params => { return axios.get(`${base}/insiis/pages/insuredmgmt/aloneinjury/AloneInjuryapi.jsp`,
     { params: params }); };
-
+    export const changepsw = params => { return axios.get(`${base}/insiis/pages/insuredmgmt/aloneinjury/AloneInjuryapi.jsp`,
+        { params: params }); };
 // export const requestLogin = params => { return axios.post(`${base}/login`, params).then(res => res.data); };
 //
 // export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };

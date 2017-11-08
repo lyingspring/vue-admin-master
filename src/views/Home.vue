@@ -20,12 +20,33 @@
 					<marquee class="el-dropdown-link userinfo-inner" behavior="scroll">{{sysUserName}}</marquee>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item>我的消息</el-dropdown-item>
-						<el-dropdown-item>设置</el-dropdown-item>
+						<el-dropdown-item >设置</el-dropdown-item>
+						<el-dropdown-item @click.native="changepswVisible = true">密码修改</el-dropdown-item>
 						<el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
 			</el-col>
 		</el-col>
+
+		<!--修改密码界面-->
+	  <el-dialog title="密码修改" v-model="changepswVisible" :close-on-click-modal="false">
+	    <el-form :model="changepsw" label-width="80px" :rules="changepswmRules" ref="changepsw">
+				<el-form-item prop="oldPass" label="原密码">
+			    <el-input type="password" v-model="changepsw.oldPass"  auto-complete="off" placeholder="原密码"></el-input>
+			  </el-form-item>
+				<el-form-item prop="newPass" label="新密码">
+			    <el-input type="password" v-model="changepsw.newPass"  auto-complete="off" placeholder="新密码"></el-input>
+			  </el-form-item>
+				<el-form-item prop="checkPass" label="重复密码">
+			    <el-input type="password" v-model="changepsw.checkPass"  auto-complete="off" placeholder="重复新密码"></el-input>
+			  </el-form-item>
+	    </el-form>
+	    <div slot="footer" class="dialog-footer">
+	      <el-button @click.native="changepswVisible = false">取消</el-button>
+	      <el-button type="primary" @click.native="changeSubmit" :loading="editLoading">提交</el-button>
+	    </div>
+	  </el-dialog>
+
 		<el-col :span="24" class="main">
 			<aside :class="collapsed?'menu-collapsed':'menu-expanded'">
 				<!--导航菜单-->
@@ -78,6 +99,9 @@
 </template>
 
 <script>
+import {
+  changepsw
+} from '../api/api';
 	export default {
 		data() {
 			return {
@@ -85,6 +109,9 @@
 				collapsed:false,
 				sysUserName: '',
 				sysUserAvatar: '',
+				loginid:'',
+				changepswVisible: false, //修改密码界面是否显示
+				editLoading: false,
 				form: {
 					name: '',
 					region: '',
@@ -94,6 +121,30 @@
 					type: [],
 					resource: '',
 					desc: ''
+				},
+				//修改密码
+	      changepsw: {
+	       oldPass: '',
+	        newPass: '',
+	        checkPass: ''
+
+	      },
+				changepswmRules:{
+					oldPass: [{
+	          required: true,
+	          message: '请输入密码',
+	          trigger: 'blur'
+	        }],
+					newPass: [{
+	          required: true,
+	          message: '请输入密码',
+	          trigger: 'blur'
+	        }],
+					checkPass: [{
+	          required: true,
+	          message: '请输入密码',
+	          trigger: 'blur'
+	        }]
 				}
 			}
 		},
@@ -129,7 +180,40 @@
 			},
 			showMenu(i,status){
 				this.$refs.menuCollapsed.getElementsByClassName('submenu-hook-'+i)[0].style.display=status?'block':'none';
-			}
+			},
+			//新增
+	    changeSubmit: function() {
+	      this.$refs.changepsw.validate((valid) => {
+	        if (valid) {
+	          this.$confirm('确认提交吗？', '提示', {}).then(() => {
+	            this.addLoading = true;
+	            //NProgress.start();
+	            let para = Object.assign({}, this.changepsw);
+							para.oldPass=hex_md5(para.oldPass);
+							para.newPass=hex_md5(para.newPass);
+							para.checkPass=hex_md5(para.checkPass);
+							para.loginid=this.loginid;
+							para.method='changepsw';
+	            changepsw(para).then((res) => {
+	              this.addLoading = false;
+	              //NProgress.done();
+	              if(res.data.code=='200'){
+	                this.$message({
+	                  message: '提交成功',
+	                  type: 'success'
+	                });
+	              }else{
+	                this.$message.error(res.data.msg);
+	              }
+
+	              this.$refs['changepsw'].resetFields();
+	              //this.addFormVisible = false;
+	            // this.getUsers();
+	            });
+	          });
+	        }
+	      });
+	    }
 		},
 		mounted() {//页面加载时运行
 			var user = sessionStorage.getItem('user');
@@ -137,6 +221,7 @@
 				user = JSON.parse(user);
 				this.sysUserName = user.bae049+' 工程时间：'+user.bae052+'-'+user.bae053|| '';
 				this.sysUserAvatar = require('./../assets/logo.png') || '';
+				this.loginid = user.aaz001;
 			}
 
 		}

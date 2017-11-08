@@ -23,9 +23,9 @@
     </el-table-column>
     <el-table-column prop="aac003" label="姓名" width="100" sortable>
     </el-table-column>
-    <el-table-column prop="aac004" label="性别" width="80" :formatter="formatSex" sortable>
+    <el-table-column prop="aac004" label="性别" width="75" :formatter="formatSex" sortable>
     </el-table-column>
-    <el-table-column prop="aae135" label="身份证" width="180" sortable>
+    <el-table-column prop="aae135" label="身份证" width="185" sortable>
     </el-table-column>
     <el-table-column prop="aac006" label="生日" width="120" sortable>
     </el-table-column>
@@ -310,7 +310,7 @@ export default {
     handleAdd: function() {
       var mydate=new Date();
       var nowdate=util.formatDate.format(mydate,'yyyyMMdd');
-      
+
       if(this.login_user.bae053<nowdate){
         this.$message.error('工程已到期，不能进行新增操作！工程到期时间：'+this.login_user.bae053);
         return;

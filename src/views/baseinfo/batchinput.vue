@@ -20,9 +20,9 @@
     </el-table-column>
     <el-table-column prop="aac003" label="姓名" width="100" sortable>
     </el-table-column>
-    <el-table-column prop="aac004_s" label="性别" width="80" :formatter="formatSex" sortable>
+    <el-table-column prop="aac004_s" label="性别" width="75" :formatter="formatSex" sortable>
     </el-table-column>
-    <el-table-column prop="aac004" label="性别" width="80" v-if="column_show" sortable>
+    <el-table-column prop="aac004" label="性别" width="75" v-if="column_show" sortable>
     </el-table-column>
     <el-table-column prop="aae135" label="身份证" width="180" sortable>
     </el-table-column>
@@ -120,7 +120,7 @@ export default {
         this.$message.error('工程已到期，不能进行新增操作！工程到期时间：'+this.login_user.bae053);
         return;
       }
-      
+
       this.$confirm('确认上传选中记录吗？', '提示', {
         type: 'warning'
       }).then(() => {
