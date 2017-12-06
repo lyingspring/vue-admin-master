@@ -84,7 +84,7 @@
   <el-dialog title="工伤人员新增" v-model="addFormVisible" :close-on-click-modal="false">
     <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
       <el-form-item label="信息搜索">
-        <el-autocomplete style="width:50%"  icon="search" v-model="searchinfo" :fetch-suggestions="querySearchAsync" placeholder="请输入身份证或姓名..." @select="handleSelect"></el-autocomplete>
+        <el-autocomplete style="width:50%"  icon="search" v-model="searchinfo" :fetch-suggestions="querySearchAsync" placeholder="请输入身份证..." @select="handleSelect"></el-autocomplete>
       </el-form-item>
       <el-form-item label="ID" v-if="column_show">
         <el-input v-model="addForm.aac001" style="width:50%" auto-complete="off"></el-input>
@@ -411,13 +411,14 @@ export default {
     },
     querySearchAsync(queryString, cb) { //远程索搜
 
-      let para = {
-        method: 'querySearchperson',
-        msg: queryString
-      };
-      var results = "";
-      if (util.strlen(queryString) >= 4) { //如果大于两个中文或4个英文
+
+      //var results = "";
+      if (util.strlen(queryString) == 18) { //如果大于两个中文或4个英文
         //console.log(util.validateIdCard("330283198602180018"));
+        let para = {
+          method: 'querySearchperson',
+          msg: queryString
+        };
         querySearchperson(para).then((res) => {
           cb(res.data);
         });
